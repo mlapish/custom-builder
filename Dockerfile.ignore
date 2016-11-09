@@ -1,5 +1,7 @@
 FROM repomgr.tsl.telus.com:19903/telus/telus-tomcat:8
 
+ARG appCtx
+
 RUN chmod -R 777 /opt/tomcat
 
 COPY *.war /opt/tomcat/webapps/ROOT.war
