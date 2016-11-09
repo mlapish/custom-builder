@@ -1,0 +1,22 @@
+FROM repomgr.tsl.telus.com:19903/telus/telus-tomcat:8
+
+COPY *.war /opt/tomcat/webapps/ROOT.war
+
+#Create a location for config files for file based configuration
+RUN mkdir /opt/tomcat/conf/local 
+RUN mkdir /opt/tomcat/conf/local/${appCtx}
+
+#Get the configuration files and keystore
+COPY *.xml /opt/tomcat/conf/local/${appCtx}
+COPY *.jks /opt/tomcat/conf/local/
+
+#Create the environment.properties file at a location on the classpath
+RUN echo "configProviderClass=com.telus.framework.config.file.FileXmlProvider" >> /opt/tomcat/lib/environment.properties && \
+  echo "configRootPath=/opt/webserver/conf/local" >> /opt/tomcat/lib/environment.properties
+
+#Update the start options for Tomact
+ENV CATALINA_OPTS="-Djava.security.egd=file:/dev/./urandom  \
+  -Djavax.net.ssl.trustStore=/opt/tomcat/conf/local/TrustKeystore-Non-Prod.jks \
+  -Djavax.net.ssl.trustStorePassword=truststorepass 
+
+CMD ["catalina.sh", "run"]
