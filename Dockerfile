@@ -29,4 +29,5 @@ LABEL io.k8s.display-name="OpenShift Origin Custom Builder Example" \
 ENV HOME=/root
 COPY build.sh /tmp/build.sh
 COPY Dockerfile.ignore /tmp/Dockerfile
+RUN chmod +x /tmp/build.sh
 CMD ["/tmp/build.sh"]
