@@ -18,6 +18,7 @@ if [[ "${SOURCE_REPOSITORY}" != "git://"* ]] && [[ "${SOURCE_REPOSITORY}" != "gi
   if [[ "${URL}" != "http://"* ]] && [[ "${URL}" != "https://"* ]]; then
     URL="https://${URL}"
   fi
+  
   curl --head --silent --fail --location --max-time 16 $URL > /dev/null
   if [ $? != 0 ]; then
     echo "Could not access source url: ${SOURCE_REPOSITORY}"
@@ -25,24 +26,24 @@ if [[ "${SOURCE_REPOSITORY}" != "git://"* ]] && [[ "${SOURCE_REPOSITORY}" != "gi
   fi
 fi
 
-if [ -n "${SOURCE_REF}" ]; then
-  BUILD_DIR=$(mktemp --directory)
-  git clone --recursive "${SOURCE_REPOSITORY}" "${BUILD_DIR}"
-  if [ $? != 0 ]; then
-    echo "Error trying to fetch git source: ${SOURCE_REPOSITORY}"
-    exit 1
-  fi
-  pushd "${BUILD_DIR}"
-  git checkout "${SOURCE_REF}"
-  if [ $? != 0 ]; then
-    echo "Error trying to checkout branch: ${SOURCE_REF}"
-    exit 1
-  fi
-  popd
-  docker build --rm -t "${TAG}" "${BUILD_DIR}"
-else
-  docker build --rm -t "${TAG}" "${SOURCE_REPOSITORY}"
+
+BUILD_DIR=$(mktemp --directory)
+pushd "${BUILD_DIR}"
+wget -r -nd -l 1 -A.war $URL/war > /dev/null
+wget -r -nd -l 1 -A.xml $URL/conf > /dev/null
+#  git clone --recursive "${SOURCE_REPOSITORY}" "${BUILD_DIR}"
+if [ $? != 0 ]; then
+  echo "Error trying to fetch git source: ${SOURCE_REPOSITORY}"
+  exit 1
 fi
+  
+#  git checkout "${SOURCE_REF}"
+#  if [ $? != 0 ]; then
+#    echo "Error trying to checkout branch: ${SOURCE_REF}"
+#    exit 1
+#  fi
+popd
+docker build --rm -t "${TAG}" "${BUILD_DIR}"
 
 if [[ -d /var/run/secrets/openshift.io/push ]] && [[ ! -e /root/.dockercfg ]]; then
   cp /var/run/secrets/openshift.io/push/.dockercfg /root/.dockercfg
