@@ -29,11 +29,12 @@ fi
 
 BUILD_DIR=$(mktemp --directory)
 cp /tmp/Dockerfile ${BUILD_DIR}
-mkdir ${BUILD_DIR}/${SOURCE_CONTEXT_DIR}
 pushd "${BUILD_DIR}"
 wget -r -nd -l 1 -A.war ${SOURCE_REPOSITORY}/war > /dev/null
 curl -O --noproxy '*' http://btln000532.corp.ads:8080/trust/TrustKeystore-Non-Prod.jks
-pushd ${BUILD_DIR}/${SOURCE_CONTEXT_DIR}
+
+mkdir ${SOURCE_CONTEXT_DIR}
+pushd ${SOURCE_CONTEXT_DIR}
 wget -r -nd -l 1 -A.xml ${SOURCE_REPOSITORY}/conf > /dev/null
 
 #  git clone --recursive "${SOURCE_REPOSITORY}" "${BUILD_DIR}"
@@ -47,6 +48,7 @@ fi
 #    echo "Error trying to checkout branch: ${SOURCE_REF}"
 #    exit 1
 #  fi
+popd
 popd
 docker build --rm --build-arg appCtx=${SOURCE_CONTEXT_DIR} -t "${TAG}" "${BUILD_DIR}"
 
