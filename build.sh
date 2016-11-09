@@ -28,12 +28,16 @@ fi
 
 
 BUILD_DIR=$(mktemp --directory)
+mkdir ${BUILD_DIR}/${SOURCE_CONTEXT_DIR}
 pushd "${BUILD_DIR}"
-wget -r -nd -l 1 -A.war $URL/war > /dev/null
-wget -r -nd -l 1 -A.xml $URL/conf > /dev/null
+wget -r -nd -l 1 -A.war ${SOURCE_REPOSITORY}/war > /dev/null
+curl -O --noproxy '*' http://btln000532.corp.ads:8080/trust/TrustKeystore-Non-Prod.jks
+pushd ${BUILD_DIR}/${SOURCE_CONTEXT_DIR}
+wget -r -nd -l 1 -A.xml ${SOURCE_REPOSITORY}/conf > /dev/null
+
 #  git clone --recursive "${SOURCE_REPOSITORY}" "${BUILD_DIR}"
 if [ $? != 0 ]; then
-  echo "Error trying to fetch git source: ${SOURCE_REPOSITORY}"
+  echo "Error trying to fetch application from: ${SOURCE_REPOSITORY}"
   exit 1
 fi
   
@@ -43,7 +47,7 @@ fi
 #    exit 1
 #  fi
 popd
-docker build --rm -t "${TAG}" "${BUILD_DIR}"
+docker build --rm -build-arg appCtx=${SOURCE_CONTEXT_DIR} -t "${TAG}" "${BUILD_DIR}"
 
 if [[ -d /var/run/secrets/openshift.io/push ]] && [[ ! -e /root/.dockercfg ]]; then
   cp /var/run/secrets/openshift.io/push/.dockercfg /root/.dockercfg
