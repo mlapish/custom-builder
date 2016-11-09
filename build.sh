@@ -28,6 +28,7 @@ fi
 
 
 BUILD_DIR=$(mktemp --directory)
+cp /tmp/Dockerfile ${BUILD_DIR}
 mkdir ${BUILD_DIR}/${SOURCE_CONTEXT_DIR}
 pushd "${BUILD_DIR}"
 wget -r -nd -l 1 -A.war ${SOURCE_REPOSITORY}/war > /dev/null
