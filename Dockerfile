@@ -16,6 +16,9 @@
 #
 FROM openshift/origin-base
 
+ENV https_proxy=http://webproxystatic-on.tsl.telus.com:8080
+ENV http_proxy=http://webproxystatic-on.tsl.telus.com:8080
+
 RUN INSTALL_PKGS="gettext automake make docker" && \
     yum install -y $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
