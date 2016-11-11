@@ -53,21 +53,27 @@ popd
 
 #Merge the push/pull secrets into a single config.json file
 mkdir -p /root/.docker
-echo "{ \"auths\": {" > /root/.docker/config.json
-cat /var/run/secrets/openshift.io/pull/.dockercfg >> /root/.docker/config.json
-echo "," > /root/.docker/config.json
-cat /var/run/secrets/openshift.io/push/.dockercfg >> /root/.docker/config.json
-echo "}" >> /root/.docker/config.json
+#echo "{ \"auths\": " > /root/.docker/config.json
+#cat /var/run/secrets/openshift.io/pull/.dockercfg >> /root/.docker/config.json
+#echo "," > /root/.docker/config.json
+#cat /var/run/secrets/openshift.io/push/.dockercfg >> /root/.docker/config.json
+#echo "}" >> /root/.docker/config.json
 
-#if [[ -d /var/run/secrets/openshift.io/pull ]] && [[ ! -e /root/.docker/config.json ]]; then
+if [[ -d /var/run/secrets/openshift.io/pull ]] && [[ ! -e /root/.docker/config.json ]]; then
 #  cp /var/run/secrets/openshift.io/pull/.dockercfg /root/.docker/config.json
-#fi
+  echo "{ \"auths\": " > /root/.docker/config.json
+  cat /var/run/secrets/openshift.io/pull/.dockercfg >> /root/.docker/config.json
+  echo "}" >> /root/.docker/config.json
+fi
 
 docker build --rm --build-arg appCtx=${SOURCE_CONTEXT_DIR} -t "${TAG}" "${BUILD_DIR}"
 
-#if [[ -d /var/run/secrets/openshift.io/push ]] ; then
+if [[ -d /var/run/secrets/openshift.io/push ]] ; then
 #  cp /var/run/secrets/openshift.io/push/.dockercfg /root/.docker/config.json
-#fi
+  echo "{ \"auths\": " > /root/.docker/config.json
+  cat /var/run/secrets/openshift.io/push/.dockercfg >> /root/.docker/config.json
+  echo "}" >> /root/.docker/config.json
+fi
 
 if [ -n "${OUTPUT_IMAGE}" ] || [ -s "/root/.docker/config.json" ]; then
   docker push "${TAG}"
