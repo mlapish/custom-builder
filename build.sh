@@ -55,6 +55,7 @@ popd
 mkdir -p /root/.docker
 echo "{ \"auths\": {" > /root/.docker/config.json
 cat /var/run/secrets/openshift.io/pull/.dockercfg >> /root/.docker/config.json
+echo "," > /root/.docker/config.json
 cat /var/run/secrets/openshift.io/push/.dockercfg >> /root/.docker/config.json
 echo "}" >> /root/.docker/config.json
 
