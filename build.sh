@@ -50,13 +50,14 @@ fi
 #  fi
 popd
 popd
+mkdir -p /root/.docker
 if [[ -d /var/run/secrets/openshift.io/pull ]] && [[ ! -e /root/.docker/config.json ]]; then
   cp /var/run/secrets/openshift.io/pull/.dockercfg /root/.docker/config.json
 fi
 
 docker build --rm --build-arg appCtx=${SOURCE_CONTEXT_DIR} -t "${TAG}" "${BUILD_DIR}"
 
-if [[ -d /var/run/secrets/openshift.io/push ]] && [[ ! -e /root/.docker/config.json ]]; then
+if [[ -d /var/run/secrets/openshift.io/push ]] ; then
   cp /var/run/secrets/openshift.io/push/.dockercfg /root/.docker/config.json
 fi
 
