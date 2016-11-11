@@ -54,8 +54,8 @@ popd
 #Merge the push/pull secrets into a single config.json file
 mkdir -p /root/.docker
 echo "{ \"auths\": {" > /root/.docker/config.json
-echo /var/run/secrets/openshift.io/pull/.dockercfg >> /root/.docker/config.json
-echo /var/run/secrets/openshift.io/push/.dockercfg >> /root/.docker/config.json
+cat /var/run/secrets/openshift.io/pull/.dockercfg >> /root/.docker/config.json
+cat /var/run/secrets/openshift.io/push/.dockercfg >> /root/.docker/config.json
 echo "}" >> /root/.docker/config.json
 
 #if [[ -d /var/run/secrets/openshift.io/pull ]] && [[ ! -e /root/.docker/config.json ]]; then
