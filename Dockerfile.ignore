@@ -15,12 +15,13 @@ COPY $appCtx/*.xml /opt/tomcat/conf/local/$appCtx/
 COPY *.jks /opt/tomcat/conf/local/
 
 #Create the environment.properties file at a location on the classpath
-RUN echo "configProviderClass=com.telus.framework.config.file.FileXmlProvider" >> /opt/tomcat/lib/environment.properties && \
-  echo "configRootPath=/opt/tomcat/conf/local" >> /opt/tomcat/lib/environment.properties
+RUN echo "configProviderClass=com.telus.framework.config.file.FileXmlProvider" >> /opt/tomcat/lib/environment.docker.properties && \
+  echo "configRootPath=/opt/tomcat/conf/local" >> /opt/tomcat/lib/environment.docker.properties
 
 #Update the start options for Tomact
 ENV CATALINA_OPTS="-Djava.security.egd=file:/dev/./urandom  \
   -Djavax.net.ssl.trustStore=/opt/tomcat/conf/local/TrustKeystore-Non-Prod.jks \
-  -Djavax.net.ssl.trustStorePassword=truststorepass 
+  -Djavax.net.ssl.trustStorePassword=truststorepass \
+  -DconfigEnvFile=environment.docker.properties
 
 CMD ["catalina.sh", "run"]
