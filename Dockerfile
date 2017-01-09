@@ -24,7 +24,7 @@ RUN INSTALL_PKGS="gettext automake make docker" && \
     rpm -V $INSTALL_PKGS && \
     yum clean all
 
-LABEL io.k8s.display-name="OpenShift Origin Custom Builder Example" \
+LABEL io.k8s.display-name="Custom Builder for generic Tomcat application" \
       io.k8s.description="This is an example of a custom builder for use with OpenShift Origin."
 ENV HOME=/root
 COPY build.sh /tmp/build.sh
